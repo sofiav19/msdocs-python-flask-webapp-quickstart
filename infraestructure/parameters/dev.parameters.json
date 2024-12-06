@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServicePlanSkuName": {
+            "value": "B1"
+        },
+        "useralias": {
+            "value": "sofia"
+        },
+        "appServicePlanName": {
+            "value": "sofia-asp-dev"
+        },
+        "appServiceWebsiteBEName": {
+            "value": "sofia-be-dev"
+        },
+        "location": {
+            "value": "westeurope"
+        },
+        "containerRegistryName": {
+            "value": "sofiaacrdev"
+        },
+        "dockerRegistryImageName": {
+            "value": "sofiaimages"
+        },
+        "dockerRegistryImageVersion": {
+            "value": "latest"
+        }
+}
+}

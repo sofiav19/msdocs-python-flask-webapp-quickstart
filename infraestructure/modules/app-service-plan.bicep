@@ -1,20 +1,23 @@
-@description('Name of the App Service Plan')
-param name string
-
-@description('Location of the App Service Plan')
-param location string
-
-@description('SKU configuration for the App Service Plan')
-param sku object
-
-resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
-  name: name
+param location string = resourceGroup().location
+param appServicePlanName string
+@allowed([
+  'B1'
+  'F1'
+])
+param skuName string
+resource appServicePlan 'Microsoft.Web/serverFarms@2022-03-01' = {
+  name: appServicePlanName
   location: location
-  sku: sku
-  kind: 'Linux'
+  sku: {
+  capacity: 1
+  family: 'B'
+  name: skuName
+  size: 'B1'
+  tier: 'Basic'
+  }
+  kind: 'linux'
   properties: {
-    reserved: sku.reserved
+  reserved: true
   }
 }
-
 output id string = appServicePlan.id

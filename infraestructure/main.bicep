@@ -1,54 +1,44 @@
-param location string
-param containerRegistryName string
-param containerRegistryImageName string
-param containerRegistryImageVersion string
-param appServicePlanName string
-param webAppName string
 
-// Deploy Azure Container Registry
-module acr 'modules/acr.bicep' = {
-  name: 'acrDeployment'
-  params: {
+param appServicePlanSkuName string
+param appServicePlanName string
+param appServiceWebsiteBEName string
+param location string = resourceGroup().location
+param containerRegistryName string
+param dockerRegistryImageName string
+param dockerRegistryImageVersion string = 'latest'
+param userAlias string
+
+
+module containerRegistry 'modules/acr.bicep' = {
+    name: 'cr-${userAlias}'
+    params: {
     name: containerRegistryName
     location: location
-    acrAdminUserEnabled: true
   }
-}
-
-// Deploy Azure App Service Plan
-module appServicePlan 'modules/app-service-plan.bicep' = {
-  name: 'appServicePlanDeployment'
-  params: {
-    name: appServicePlanName
+  }
+  module appServicePlan 'modules/app-service-plan.bicep' = {
+    name: 'asp-${userAlias}'
+    params: {
     location: location
-    sku: {
-      capacity: 1
-      family: 'B'
-      name: 'B1'
-      size: 'B1'
-      tier: 'Basic'
-      reserved: true
-    }
+    appServicePlanName: appServicePlanName
+    skuName: appServicePlanSkuName
   }
-}
-
-// Deploy Azure Web App
-module webApp 'modules/web-app.bicep' = {
-  name: 'webAppDeployment'
-  params: {
-    name: webAppName
+  }
+  module appServiceWebsiteBE 'modules/web-app.bicep' = {
+    name: 'appfe-${userAlias}'
+    params: {
+    name: appServiceWebsiteBEName
     location: location
-    kind: 'app'
-    serverFarmResourceId: appServicePlan.outputs.id
-    siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryName}.azurecr.io/${containerRegistryImageName}:${containerRegistryImageVersion}'
-      appCommandLine: ''
-    }
-    appSettingsKeyValuePairs: {
-      WEBSITES_ENABLE_APP_SERVICE_STORAGE: false
-      DOCKER_REGISTRY_SERVER_URL: acr.outputs.loginServer
-      DOCKER_REGISTRY_SERVER_USERNAME: acr.outputs.adminUsername
-      DOCKER_REGISTRY_SERVER_PASSWORD: acr.outputs.adminPassword
-    }
+    appServicePlanId: appServicePlan.outputs.id
+    appCommandLine: ''
+    dockerRegistryName: containerRegistryName
+    dockerRegistryServerUserName: containerRegistry.outputs.containerRegistryUserName
+    dockerRegistryServerPassword: containerRegistry.outputs.containerRegistryPassword0
+    dockerRegistryImageName: dockerRegistryImageName
+    dockerRegistryImageVersion: dockerRegistryImageVersion
   }
+  dependsOn: [
+    containerRegistry
+    appServicePlan
+  ]
 }
