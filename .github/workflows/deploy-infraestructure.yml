@@ -17,7 +17,7 @@ env:
   USER_ALIAS: sofias
   REGISTRY_LOGIN_SERVER: sofiaacrdev.azurecr.io
   IMAGE_BASE_NAME: sofiacontainer
-  WEBAPP_NAME_DEV: sofiawebapp
+  WEBAPP_NAME_DEV: sofia-webapp
 
 jobs:
   build:
@@ -66,7 +66,7 @@ jobs:
           login-server: ${{ env.REGISTRY_LOGIN_SERVER }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
-          
+
       - name: Set Image Version
         id: image-version
         run: echo "::set-output name=version::$(date +'%Y.%m.%d.%H.%M')"

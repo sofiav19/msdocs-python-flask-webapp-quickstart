@@ -9,10 +9,10 @@
             "value": "sofia"
         },
         "appServicePlanName": {
-            "value": "sofia-asp-dev"
+            "value": "sofia-asp"
         },
         "appServiceWebsiteBEName": {
-            "value": "sofia-be-dev"
+            "value": "sofia-webapp"
         },
         "location": {
             "value": "westeurope"
