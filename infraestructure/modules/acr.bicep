@@ -11,6 +11,8 @@ properties: {
 }
 }
 
-//output containerRegistryUserName string = containerRegistry.listCredentials().username
-//output containerRegistryPassword0 string = containerRegistry.listCredentials().passwords[0].value
+#disable-next-line outputs-should-not-contain-secrets
+output containerRegistryUserName string = containerRegistry.listCredentials().username
+#disable-next-line outputs-should-not-contain-secrets
+output containerRegistryPassword0 string = containerRegistry.listCredentials().passwords[0].value
 
