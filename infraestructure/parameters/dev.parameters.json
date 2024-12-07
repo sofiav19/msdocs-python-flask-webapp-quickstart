@@ -5,7 +5,7 @@
         "appServicePlanSkuName": {
             "value": "B1"
         },
-        "useralias": {
+        "userAlias": {
             "value": "sofia"
         },
         "appServicePlanName": {
