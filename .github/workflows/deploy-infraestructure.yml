@@ -21,18 +21,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      # Checkout code
-      - uses: actions/checkout@main
-
-      # Lint Bicep code
-      #- name: Run Bicep linter
-      #  run: az bicep build --file ./infraestructure/main.bicep
-
-      - name: Upload Bicep build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: bicep-build
-          path: ./infraestructure/main.bicep  # Adjust this path as necessary for your build output
 
   deploy-dev:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
@@ -60,7 +48,7 @@ jobs:
     - name: Deploy to dev
       uses: azure/arm-deploy@v2
       with:
-        subscriptionId: ${{ env.SUBSCRIPTION_ID_DEV }}
-        resourceGroupName: ${{ env.RESOURCE_GROUP_DEV }}
+        subscriptionId: ${{env.SUBSCRIPTION_ID_DEV }}
+        resourceGroupName: ${{env.RESOURCE_GROUP_DEV }}
         template: ./infraestructure/main.bicep
         parameters: ./infraestructure/parameters/dev.parameters.json
