@@ -20,7 +20,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
+      - uses: actions/checkout@v2
+      - name: Run Bicep linter
+        run: az bicep build --file ./infraestructure/main.bicep
 
   deploy-dev:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
@@ -32,13 +34,7 @@ jobs:
     steps:
 
       # Checkout code
-    - uses: actions/checkout@main
-
-    - name: Download Bicep build artifact
-      uses: actions/download-artifact@v4
-      with:
-          name: bicep-build
-
+    - uses: actions/checkout@v2
       # Log into Azure
     - uses: azure/login@v2
       with:
