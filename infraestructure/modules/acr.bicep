@@ -10,5 +10,7 @@ properties: {
   adminUserEnabled: true
 }
 }
-output containerRegistryUserName string = containerRegistry.listCredentials().username
-output containerRegistryPassword0 string = containerRegistry.listCredentials().passwords[0].value
+
+//output containerRegistryUserName string = containerRegistry.listCredentials().username
+//output containerRegistryPassword0 string = containerRegistry.listCredentials().passwords[0].value
+
