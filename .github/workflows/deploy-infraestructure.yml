@@ -46,7 +46,7 @@ jobs:
         with:
           subscriptionId: ${{ env.SUBSCRIPTION_ID_DEV }}
           resourceGroupName: ${{ env.RESOURCE_GROUP_DEV }}
-          template: ./infraestructure/key-vault.bicep
+          template: ./infraestructure/modules/key-vault.bicep
           parameters: ./infraestructure/parameters/key-vault.parameters.json
 
       - name: Deploy Infrastructure
