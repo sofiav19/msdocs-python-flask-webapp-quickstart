@@ -7,13 +7,23 @@ param containerRegistryName string
 param dockerRegistryImageName string
 param dockerRegistryImageVersion string = 'latest'
 param userAlias string
+param keyVaultName string = 'sofia-kv'
 
+module keyVault 'modules/key-vault.bicep' = {
+  name: 'kv-${userAlias}'
+  params: {
+    name: keyVaultName
+    location: location
+    enableVaultForDeployment: true
+}
+}
 
 module containerRegistry 'modules/acr.bicep' = {
     name: 'cr-${userAlias}'
     params: {
     name: containerRegistryName
     location: location
+    keyVaultName: 'kv-${userAlias}'
   }
   }
   module appServicePlan 'modules/app-service-plan.bicep' = {
@@ -24,6 +34,9 @@ module containerRegistry 'modules/acr.bicep' = {
     skuName: appServicePlanSkuName
   }
   }
+
+
+
   module appServiceWebsiteBE 'modules/web-app.bicep' = {
     name: 'appfe-${userAlias}'
     params: {
@@ -32,13 +45,14 @@ module containerRegistry 'modules/acr.bicep' = {
     appServicePlanId: appServicePlan.outputs.id
     appCommandLine: ''
     dockerRegistryName: containerRegistryName
-    dockerRegistryServerUserName: containerRegistry.outputs.containerRegistryUserName
-    dockerRegistryServerPassword: containerRegistry.outputs.containerRegistryPassword0
     dockerRegistryImageName: dockerRegistryImageName
     dockerRegistryImageVersion: dockerRegistryImageVersion
+    dockerRegistryServerUrl: 'https://${containerRegistryName}.azurecr.io'
+    keyVaultName: keyVaultName
   }
   dependsOn: [
     containerRegistry
     appServicePlan
+    keyVault
   ]
 }
