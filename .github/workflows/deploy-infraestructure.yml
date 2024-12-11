@@ -49,7 +49,6 @@ jobs:
           subscriptionId: ${{ env.SUBSCRIPTION_ID_DEV }}
           resourceGroupName: ${{ env.RESOURCE_GROUP_DEV }}
           template: ./infraestructure/modules/key-vault.bicep
-          parameters: ./infraestructure/parameters/dev.parameters.json
 
       - name: Deploy Infrastructure
         uses: azure/arm-deploy@v2
