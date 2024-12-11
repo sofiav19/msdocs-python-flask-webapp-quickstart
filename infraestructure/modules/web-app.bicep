@@ -13,6 +13,7 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
 name: name
 location: location
 
+
 kind: 'app'
 properties: {
 // severFarmResourceId: resourceId('Microsoft.Web/serverfarms', appServicePlanName)
