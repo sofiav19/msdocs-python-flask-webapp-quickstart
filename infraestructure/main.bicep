@@ -7,7 +7,7 @@ param containerRegistryName string
 param dockerRegistryImageName string
 param dockerRegistryImageVersion string = 'latest'
 param userAlias string
-param keyVaultName string = 'sofia-kv'
+param keyVaultName string
 
 module keyVault 'modules/key-vault.bicep' = {
   name: 'kv-${userAlias}'

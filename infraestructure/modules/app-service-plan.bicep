@@ -1,5 +1,6 @@
 param location string = resourceGroup().location
 param appServicePlanName string
+
 @allowed([
   'B1'
   'F1'

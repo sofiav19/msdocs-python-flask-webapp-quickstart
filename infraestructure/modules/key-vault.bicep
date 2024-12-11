@@ -1,4 +1,4 @@
-param name string
+param name string = 'sofia-kv'
 param location string = resourceGroup().location
 param enableVaultForDeployment bool = false
 param principalId string = '25d8d697-c4a2-479f-96e0-15593a830ae5'
