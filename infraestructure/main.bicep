@@ -23,7 +23,7 @@ module containerRegistry 'modules/acr.bicep' = {
     params: {
     name: containerRegistryName
     location: location
-    keyVaultName: 'kv-${userAlias}'
+    keyVaultId: keyVault.outputs.keyVaultId
   }
   }
   module appServicePlan 'modules/app-service-plan.bicep' = {
@@ -52,7 +52,6 @@ module containerRegistry 'modules/acr.bicep' = {
   }
   dependsOn: [
     containerRegistry
-    appServicePlan
     keyVault
   ]
 }

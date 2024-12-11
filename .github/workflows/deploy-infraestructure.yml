@@ -18,7 +18,8 @@ env:
   REGISTRY_LOGIN_SERVER: sofiaacrdev.azurecr.io
   IMAGE_BASE_NAME: sofiacontainer
   WEBAPP_NAME_DEV: sofia-webapp
-  NAME: sofia-key-vault
+  
+  KEY_VAULT_NAME: sofia-kv1
 
 
 jobs:
@@ -28,6 +29,17 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Bicep linter
         run: az bicep build --file ./infraestructure/main.bicep
+
+           
+      - name: Upload Bicep build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: bicep-build
+          path: ./infraestructure/main.bicep 
+    
+      # Checkout the repository to the runner.
+      - name: Checkout
+        uses: actions/checkout@v3
     
 
   deploy-infra:
@@ -37,18 +49,16 @@ jobs:
     environment:
       name: 'Development'
     steps:
-      - uses: actions/checkout@v2
+
+      - name: Download Bicep build artifact
+        uses: actions/download-artifact@v3
+        with:
+            name: bicep-build
+    
+        # Log into Azure
       - uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      # Deploy Key Vault infrastructure
-      - name: Deploy Key Vault
-        uses: azure/arm-deploy@v2
-        with:
-          subscriptionId: ${{ env.SUBSCRIPTION_ID_DEV }}
-          resourceGroupName: ${{ env.RESOURCE_GROUP_DEV }}
-          template: ./infraestructure/modules/key-vault.bicep
 
       - name: Deploy Infrastructure
         uses: azure/arm-deploy@v2
@@ -71,12 +81,12 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Login to Azure Container Registry
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ env.REGISTRY_LOGIN_SERVER }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+      - name: "Get container registry credentials from vault"
+        run: |
+          REGISTRY_USERNAME=$(az keyvault secret show --name adminCredentialsKeyVaultSecretUserName --vault-name ${{ env.KEY_VAULT_NAME }} --query value -o tsv)
+          REGISTRY_PASSWORD=$(az keyvault secret show --name adminCredentialsKeyVaultSecretUserPassword1 --vault-name ${{ env.KEY_VAULT_NAME }} --query value -o tsv)
+          echo "REGISTRY_USERNAME=${REGISTRY_USERNAME}" >> $GITHUB_ENV
+          echo "REGISTRY_PASSWORD=${REGISTRY_PASSWORD}" >> $GITHUB_ENV
 
       - name: Set Image Version
         id: image-version
@@ -85,11 +95,25 @@ jobs:
       - name: Build and Push Image
         run: |
           docker build . -t ${{ env.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_BASE_NAME }}:${{ steps.image-version.outputs.version }}
+          docker login ${{ env.REGISTRY_LOGIN_SERVER }} -u ${{ env.REGISTRY_USERNAME }} -p ${{ env.REGISTRY_PASSWORD }}
           docker push ${{ env.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_BASE_NAME }}:${{ steps.image-version.outputs.version }}
+  
+  deploy-container:
+      runs-on: ubuntu-latest
+      needs: build-and-deploy-container
+      environment:
+        name: 'Development'
+      steps:
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy Container to Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.WEBAPP_NAME_DEV }}
           images: |
-            ${{ env.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_BASE_NAME }}:${{ steps.image-version.outputs.version }}
+            ${{ env.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_BASE_NAME }}:${{ needs.build-and-deploy-container.outputs.image-version }}
+  
+            

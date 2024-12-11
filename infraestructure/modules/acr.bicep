@@ -1,6 +1,6 @@
 param name string
 param location string = resourceGroup().location
-param keyVaultName string
+param keyVaultId string
 
 // Azure Container Registry resource
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
@@ -16,7 +16,7 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' =
 
 // Reference existing Key Vault
 resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
-  name: keyVaultName
+  name: last(split(keyVaultId, '/')) 
 }
 
 
