@@ -40,15 +40,6 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Deploy Key Vault infrastructure
-      - name: Deploy Key Vault
-        uses: azure/arm-deploy@v2
-        with:
-          subscriptionId: ${{ env.SUBSCRIPTION_ID_DEV }}
-          resourceGroupName: ${{ env.RESOURCE_GROUP_DEV }}
-          template: ./infraestructure/modules/key-vault.bicep
-          parameters: ./infraestructure/parameters/dev.parameters.json
-
       - name: Deploy Infrastructure
         uses: azure/arm-deploy@v2
         with:
