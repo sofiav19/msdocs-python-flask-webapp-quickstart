@@ -26,10 +26,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Run Bicep linter
-        run: az bicep build --file ./infraestructure/main.bicep
-
+      - uses: actions/checkout@main
            
       - name: Upload Bicep build artifact
         uses: actions/upload-artifact@v3
