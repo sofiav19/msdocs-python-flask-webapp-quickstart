@@ -24,7 +24,7 @@ param principalId string = '7200f83e-ec45-4915-8c52-fb94147cfe5a'
     name: guid(keyVault.id, principalId, 'Key Vault Secrets User')
     scope: keyVault
     properties: {
-      roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'Key Vault Secrets User') // Key Vault Secrets User role
+      roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6') // Key Vault Secrets User role
       principalId: principalId
       principalType: 'ServicePrincipal'
     }
