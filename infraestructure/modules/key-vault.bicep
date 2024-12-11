@@ -1,7 +1,7 @@
 param name string
 param location string = resourceGroup().location
 param enableVaultForDeployment bool = false
-param principalId string = '7200f83e-ec45-4915-8c52-fb94147cfe5a'
+param principalId string = '25d8d697-c4a2-479f-96e0-15593a830ae5'
 
   resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' = {
     name: name
