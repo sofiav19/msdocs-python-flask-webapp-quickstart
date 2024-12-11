@@ -5,6 +5,9 @@
         "appServicePlanSkuName": {
             "value": "B1"
         },
+        "keyVaultName":{
+            "value": "sofia-kv" 
+        },
         "userAlias": {
             "value": "sofia"
         },
